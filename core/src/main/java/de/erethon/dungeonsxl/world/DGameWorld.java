@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Frank Baumann
+ * Copyright (C) 2012-2023 Frank Baumann
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ import de.erethon.dungeonsxl.trigger.Trigger;
 import de.erethon.dungeonsxl.trigger.TriggerType;
 import de.erethon.dungeonsxl.trigger.TriggerTypeDefault;
 import de.erethon.bedrock.compatibility.Version;
-import de.erethon.bedrock.misc.BlockUtil;
 import de.erethon.bedrock.misc.FileUtil;
 import de.erethon.dungeonsxl.world.block.GameBlock;
 import de.erethon.dungeonsxl.world.block.LockedDoor;
@@ -65,6 +64,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import de.erethon.dungeonsxl.api.dungeon.BuildMode;
+import de.erethon.dungeonsxl.util.BlockUtilCompat;
 
 /**
  * @author Frank Baumann, Milan Albrecht, Daniel Saukel
@@ -504,7 +504,7 @@ public class DGameWorld extends DInstanceWorld implements GameWorld {
             if (sign == null) {
                 continue;
             }
-            if ((block.equals(sign.getSign().getBlock()) || block.equals(BlockUtil.getAttachedBlock(sign.getSign().getBlock()))) && sign.isProtected()) {
+            if ((block.equals(sign.getSign().getBlock()) || block.equals(BlockUtilCompat.getAttachedBlock(sign.getSign().getBlock()))) && sign.isProtected()) {
                 return true;
             }
         }

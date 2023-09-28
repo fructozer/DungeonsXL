@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Frank Baumann
+ * Copyright (C) 2012-2023 Frank Baumann
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import de.erethon.dungeonsxl.api.DungeonsAPI;
 import de.erethon.dungeonsxl.api.sign.Passive;
 import de.erethon.dungeonsxl.api.world.InstanceWorld;
 import de.erethon.dungeonsxl.player.DPermission;
-import de.erethon.bedrock.misc.BlockUtil;
+import de.erethon.dungeonsxl.util.BlockUtilCompat;
 import de.erethon.dungeonsxl.world.DGameWorld;
 import de.erethon.dungeonsxl.world.block.ProtectedBlock;
 import org.bukkit.block.Sign;
@@ -66,7 +66,7 @@ public class ProtectionSign extends Passive {
 
     @Override
     public void initialize() {
-        ((DGameWorld) getGameWorld()).addGameBlock(new ProtectedBlock(api, BlockUtil.getAttachedBlock(getSign().getBlock())));
+        ((DGameWorld) getGameWorld()).addGameBlock(new ProtectedBlock(api, BlockUtilCompat.getAttachedBlock(getSign().getBlock())));
     }
 
 }

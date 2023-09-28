@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Frank Baumann
+ * Copyright (C) 2012-2023 Frank Baumann
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import de.erethon.dungeonsxl.api.sign.Deactivatable;
 import de.erethon.dungeonsxl.api.sign.DungeonSign;
 import de.erethon.dungeonsxl.event.trigger.TriggerActionEvent;
 import de.erethon.bedrock.misc.BlockUtil;
+import de.erethon.dungeonsxl.util.BlockUtilCompat;
 import de.erethon.dungeonsxl.world.DGameWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -82,7 +83,7 @@ public class RedstoneTrigger extends Trigger {
     public static RedstoneTrigger getOrCreate(Sign sign, DGameWorld gameWorld) {
         Block rtBlock;
         if (Category.WALL_SIGNS.containsBlock(sign.getBlock())) {
-            rtBlock = BlockUtil.getAttachedBlock(sign.getBlock());
+            rtBlock = BlockUtilCompat.getAttachedBlock(sign.getBlock());
         } else {
             rtBlock = sign.getBlock();
         }
