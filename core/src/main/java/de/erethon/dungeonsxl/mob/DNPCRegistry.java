@@ -18,8 +18,8 @@ package de.erethon.dungeonsxl.mob;
 
 import java.util.Iterator;
 import java.util.UUID;
-import net.citizensnpcs.Settings.Setting;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.NPCCreateEvent;
 import net.citizensnpcs.api.npc.AbstractNPC;
 import net.citizensnpcs.api.npc.NPC;
@@ -29,14 +29,11 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.MemoryDataKey;
-import net.citizensnpcs.npc.CitizensNPC;
-import net.citizensnpcs.npc.EntityControllers;
-import net.citizensnpcs.trait.ArmorStandTrait;
-import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.MountTrait;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * @author Daniel Saukel
@@ -49,23 +46,30 @@ public class DNPCRegistry implements NPCRegistry {
     }
 
     @Override
+    public NPC createNPC(EntityType entityType, String s, Location location) {
+        return createNPC(entityType,s);
+    }
+
+    @Override
     public NPC createNPC(EntityType type, UUID uuid, int id, String name) {
-        NPC npc = new CitizensNPC(uuid, id, name, EntityControllers.createForType(type), this);
+        NPC npc = CitizensAPI.createInMemoryNPCRegistry(name).createNPC(type, uuid, id, name);
         if (npc == null) {
             throw new IllegalStateException("Could not create NPC: npc is null");
         }
-
         Bukkit.getPluginManager().callEvent(new NPCCreateEvent(npc));
 
-        if (type == EntityType.ARMOR_STAND && !npc.hasTrait(ArmorStandTrait.class)) {
-            npc.addTrait(ArmorStandTrait.class);
-        }
-        if (Setting.DEFAULT_LOOK_CLOSE.asBoolean()) {
-            npc.addTrait(LookClose.class);
-        }
-        npc.addTrait(MountTrait.class);
+        Class<? extends Trait> armorstandtrait = CitizensAPI.getTraitFactory().getTraitClass("armorstandtrait");
+        if (type == EntityType.ARMOR_STAND) npc.getOrAddTrait(armorstandtrait);
+
+        Class<? extends Trait> lookclose = CitizensAPI.getTraitFactory().getTraitClass("lookclose");
+        npc.getOrAddTrait(lookclose);
 
         return npc;
+    }
+
+    @Override
+    public NPC createNPCUsingItem(EntityType entityType, String s, ItemStack itemStack) {
+        return null;
     }
 
     @Override
@@ -76,6 +80,11 @@ public class DNPCRegistry implements NPCRegistry {
     @Override
     public void deregisterAll() {
         CitizensAPI.getNPCRegistry().deregisterAll();
+    }
+
+    @Override
+    public void despawnNPCs(DespawnReason despawnReason) {
+
     }
 
     @Override
@@ -94,6 +103,11 @@ public class DNPCRegistry implements NPCRegistry {
     }
 
     @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
     public NPC getNPC(Entity entity) {
         return CitizensAPI.getNPCRegistry().getNPC(entity);
     }
@@ -101,6 +115,11 @@ public class DNPCRegistry implements NPCRegistry {
     @Override
     public boolean isNPC(Entity entity) {
         return CitizensAPI.getNPCRegistry().isNPC(entity);
+    }
+
+    @Override
+    public void saveToStore() {
+
     }
 
     @Override
@@ -132,7 +151,7 @@ public class DNPCRegistry implements NPCRegistry {
 
     // Like in AbstractNPC#save(DataKey), but without persistence stuff
     public void save(AbstractNPC npc, DataKey root) {
-        if (!npc.data().get(NPC.SHOULD_SAVE_METADATA, true)) {
+        if (!npc.data().get(NPC.Metadata.SHOULD_SAVE, true)) {
             return;
         }
         npc.data().saveTo(root.getRelative("metadata"));
